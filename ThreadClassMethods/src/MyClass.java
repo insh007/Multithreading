@@ -7,13 +7,15 @@ public class MyClass extends Thread{
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        System.out.println("t1 thread"); // This will print 3rd
+        System.out.println("t1 thread"); // This will print 2nd when you are using join method
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         MyClass t1 = new MyClass();
         t1.start();
 
-        System.out.println("Hello world!"); // This will print 2nd
+        t1.join(); // this method completely execute current thread(t1 Thread here)
+
+        System.out.println("Hello world!"); // This will print 3rd when you are using join method
     }
 }
