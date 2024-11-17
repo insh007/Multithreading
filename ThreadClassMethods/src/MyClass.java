@@ -1,11 +1,9 @@
 public class MyClass extends Thread{
     @Override
     public void run() {
-        try {
-            Thread.sleep(2000);
-            System.out.println("Thread is running...");
-        } catch (InterruptedException e) {
-            System.out.println("Thread Interrupted " + e );
+        for(int i=1; i<=5; i++){
+            System.out.println(Thread.currentThread().getName() + " is running");
+            Thread.yield(); // This method will hint the Scheduler to give the chance to another thread as well.
         }
     }
 
@@ -13,8 +11,34 @@ public class MyClass extends Thread{
         MyClass t1 = new MyClass();
         t1.start();
 
-        // This will interrupt the current thread (t1 here) meaning if t1 thread is in sleep mode or in wait mode then it will throw exception
-        t1.interrupt();
+        MyClass t2 = new MyClass();
+        t2.start();
 
     }
 }
+
+// Output without Thread.yield() method:
+
+//Thread-0 is running
+//Thread-0 is running
+//Thread-0 is running
+//Thread-0 is running
+//Thread-0 is running
+//Thread-1 is running
+//Thread-1 is running
+//Thread-1 is running
+//Thread-1 is running
+//Thread-1 is running
+
+// Output with Thread.yield() method:
+
+//Thread-0 is running
+//Thread-0 is running
+//Thread-1 is running
+//Thread-1 is running
+//Thread-0 is running
+//Thread-1 is running
+//Thread-1 is running
+//Thread-0 is running
+//Thread-1 is running
+//Thread-0 is running
