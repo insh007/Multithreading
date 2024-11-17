@@ -1,44 +1,30 @@
 public class MyClass extends Thread{
     @Override
     public void run() {
-        for(int i=1; i<=5; i++){
-            System.out.println(Thread.currentThread().getName() + " is running");
-            Thread.yield(); // This method will hint the Scheduler to give the chance to another thread as well.
+
+        while (true){
+            System.out.println("Hello World");
         }
     }
 
     public static void main(String[] args) throws InterruptedException {
         MyClass t1 = new MyClass();
+        t1.setDaemon(true);
         t1.start();
 
-        MyClass t2 = new MyClass();
-        t2.start();
+        System.out.println("main done");
 
     }
 }
-
-// Output without Thread.yield() method:
-
-//Thread-0 is running
-//Thread-0 is running
-//Thread-0 is running
-//Thread-0 is running
-//Thread-0 is running
-//Thread-1 is running
-//Thread-1 is running
-//Thread-1 is running
-//Thread-1 is running
-//Thread-1 is running
-
-// Output with Thread.yield() method:
-
-//Thread-0 is running
-//Thread-0 is running
-//Thread-1 is running
-//Thread-1 is running
-//Thread-0 is running
-//Thread-1 is running
-//Thread-1 is running
-//Thread-0 is running
-//Thread-1 is running
-//Thread-0 is running
+/*
+* A daemon thread in Java is a background thread that provides support services for other threads
+* or performs tasks in the background. It runs in parallel with the main application but
+* doesn't prevent the JVM from exiting when all user threads have finished execution.
+*
+* Key Methods:
+    1. setDaemon(boolean on):
+            i) Sets the thread as a daemon thread.
+            ii) Must be called before start(), otherwise it will throw IllegalThreadStateException.
+    2. isDaemon():
+            i) Returns true if the thread is a daemon thread.
+* */
