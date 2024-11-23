@@ -1,8 +1,8 @@
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
-public class Main {
+public class ExecutorServiceExampleI {
     public static void main(String[] args) {
         ExecutorService executor = Executors.newFixedThreadPool(2);
         for(int i=1; i<10; i++){
@@ -24,3 +24,9 @@ public class Main {
         return res;
     }
 }
+/*
+* Note: Executor Framework has mainly three interfaces :
+* 1. Executor
+* 2. ExecutorService extends Executor (extends because Executor is an interface)
+* 3. ScheduledExecutorService extends ExecutorService
+* */
