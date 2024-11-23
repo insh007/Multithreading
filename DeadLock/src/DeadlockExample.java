@@ -1,33 +1,45 @@
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 public class DeadlockExample {
     public static void main(String[] args) {
-        final String resource1 = "Resource1";
-        final String resource2 = "Resource2";
+        final Lock lock1 = new ReentrantLock();
+        final Lock lock2 = new ReentrantLock();
 
-        // Thread 1 locks resource1 first, then resource2
+        // Thread 1 tries to acquire both locks
         Thread t1 = new Thread(() -> {
-            synchronized (resource1) {
-                System.out.println("Thread 1: Locked " + resource1);
-
-                // Simulate some work
-                try { Thread.sleep(50); } catch (InterruptedException e) {}
-
-                synchronized (resource2) {
-                    System.out.println("Thread 1: Locked " + resource2);
+            try {
+                if (lock1.tryLock() && lock2.tryLock()) {
+                    try {
+                        System.out.println("Thread 1: Acquired both locks");
+                    } finally {
+                        lock2.unlock();
+                        lock1.unlock();
+                    }
+                } else {
+                    System.out.println("Thread 1: Could not acquire locks");
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
 
-        // Thread 2 locks resource1 first, then resource2 (same order as Thread 1)
+        // Thread 2 tries to acquire both locks
         Thread t2 = new Thread(() -> {
-            synchronized (resource1) {
-                System.out.println("Thread 2: Locked " + resource1);
-
-                // Simulate some work
-                try { Thread.sleep(50); } catch (InterruptedException e) {}
-
-                synchronized (resource2) {
-                    System.out.println("Thread 2: Locked " + resource2);
+            try {
+                if (lock2.tryLock(50, TimeUnit.MILLISECONDS) && lock1.tryLock()) {
+                    try {
+                        System.out.println("Thread 2: Acquired both locks");
+                    } finally {
+                        lock1.unlock();
+                        lock2.unlock();
+                    }
+                } else {
+                    System.out.println("Thread 2: Could not acquire locks");
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         });
 
@@ -36,7 +48,11 @@ public class DeadlockExample {
     }
 }
 /*
-How to Properly Resolve the Deadlock
-Solution 1: Consistent Lock Ordering - Just like above example
-Solution 2: Use ReentrantLock with tryLock - see next commit
+* Output - Because During execution of Thread 2 tryLock tries to acquire lock immediately
+Thread 1: Acquired both locks
+Thread 2: Could not acquire locks
+*
+* But if we change it to tryLock with time like : lock2.tryLock(50, TimeUnit.MILLISECONDS) && lock1.tryLock() then the output:
+Thread 1: Acquired both locks
+Thread 2: Acquired both locks
 * */
